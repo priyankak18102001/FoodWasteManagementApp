@@ -183,18 +183,57 @@ st.write(f"Estimated Future demand in **{selected_city}**:{avg_demand:.0f} units
 # ---------------------------
 # Step 4: EDA (Exploratory Data Analysis)
 # ---------------------------
-
+# 1. Food donations by Food Type
 st.subheader("Explore Data Analysis")
 eda_df = pd.read_sql(
     "SELECT Food_Type, COUNT(*) as Count FROM food_listings GROUP BY Food_Type", 
     conn
 )
-
+st.markdown("**Distribution of Food Types**")
 fig, ax = plt.subplots()
 ax.bar(eda_df["Food_Type"],eda_df["Count"],color = "blue")
 ax.set_xlabel("Food Type")
 ax.set_ylabel("count")
 plt.xticks(rotation =45)
+st.pyplot(fig)
+
+# 2. Food donations by Meal Type
+eda_meal = pd.read_sql(
+    "SELECT Meal_Type, COUNT(*) as Count FROM food_listings GROUP BY Meal_Type", 
+    conn
+)
+st.markdown("**Distribution of Meal Types**")
+fig, ax = plt.subplots()
+ax.bar(eda_meal["Meal_Type"], eda_meal["Count"], color="green")
+ax.set_xlabel("Meal Type")
+ax.set_ylabel("Count")
+plt.xticks(rotation=45)
+st.pyplot(fig)
+
+# 3. Providers by City
+eda_city = pd.read_sql(
+    "SELECT City, COUNT(*) as Count FROM providers GROUP BY City", 
+    conn
+)
+st.markdown("**Providers by City**")
+fig, ax = plt.subplots()
+ax.bar(eda_city["City"], eda_city["Count"], color="orange")
+ax.set_xlabel("City")
+ax.set_ylabel("Number of Providers")
+plt.xticks(rotation=45)
+st.pyplot(fig)
+
+# 4. Food items by Expiry Date
+eda_expiry = pd.read_sql(
+    "SELECT Expiry_Date, COUNT(*) as Count FROM food_listings GROUP BY Expiry_Date", 
+    conn
+)
+st.markdown("**Food Listings by Expiry Date**")
+fig, ax = plt.subplots()
+ax.plot(eda_expiry["Expiry_Date"], eda_expiry["Count"], marker="o", color="red")
+ax.set_xlabel("Expiry Date")
+ax.set_ylabel("Count of Food Items")
+plt.xticks(rotation=45)
 st.pyplot(fig)
 
 # Implement CURD operation
@@ -255,4 +294,5 @@ with table_delete:
         conn.execute("Delete from food_listings where Food_ID = ?",(delete_food_id,))
         conn.commit()
         st.success("Food Listings Delete Successfully")
+
 
